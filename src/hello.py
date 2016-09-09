@@ -1,8 +1,10 @@
 from flask import Flask
 from flask import make_response
 from flask import redirect
+from flask_script import Manager
 
 app = Flask(__name__)
+manager = Manager(app)
 
 @app.route('/')
 def index():
@@ -27,4 +29,5 @@ def baidu():
     return redirect('http://www.baidu.com')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)
+    #app.run(debug=True, port=5002)
+    manager.run()
