@@ -2,6 +2,7 @@ from flask import Flask
 from flask import make_response
 from flask import redirect
 from flask_script import Manager
+from flask import render_template
 
 app = Flask(__name__)
 manager = Manager(app)
@@ -28,6 +29,20 @@ def response():
 def baidu():
     return redirect('http://www.baidu.com')
 
+'''
+Jinja2模板
+'''
+@app.route('/jinja2')
+def jinja2_index():
+    return render_template('jinja2.html')
+
+@app.route('/jinja2_user/<name>')
+def jinja2_user(name):
+    return render_template('jinja2_user.html', name=name)
+
+'''
+main函数
+'''
 if __name__ == '__main__':
     #app.run(debug=True, port=5002)
     manager.run()
