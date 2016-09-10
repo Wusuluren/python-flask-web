@@ -51,7 +51,9 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username        
 
-
+'''
+#视图函数
+'''
 @app.route('/')
 def index():
     return '<h1>Hello World!</h1>'
