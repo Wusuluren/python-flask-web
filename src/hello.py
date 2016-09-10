@@ -52,6 +52,14 @@ bootstrap模板
 def bootstrap_user(name):
     return render_template('bootstrap_user.html', name=name)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('bootstrap_404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('bootstrap_500.html'), 500
+
 '''
 main函数
 '''
