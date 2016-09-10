@@ -124,6 +124,14 @@ def bootstrap_form():
 '''
 SQLAlchemy数据库
 '''
+def InitSqlAlchemy():
+    db.drop_all()
+    db.create_all()
+    admin_role = Role(name='Admin')
+    user_john = User(username='john', role=admin_role)
+    db.session.add_all([admin_role, user_john])
+    db.session.commit()
+
 @app.route('/sqlalchemy', methods=['GET', 'POST'])
 def sqlalchemy():
     form = NameForm()
@@ -153,4 +161,5 @@ main函数
 '''
 if __name__ == '__main__':
     #app.run(debug=True, port=5002)
+    InitSqlAlchemy()
     manager.run()
