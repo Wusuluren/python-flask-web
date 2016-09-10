@@ -4,10 +4,13 @@ from flask import redirect
 from flask_script import Manager
 from flask import render_template
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from datetime import datetime
 
 app = Flask(__name__)
 manager = Manager(app)
 bootstrap = Bootstrap(app)
+moment = Moment(app)
 
 @app.route('/')
 def index():
@@ -43,11 +46,17 @@ age = {'nano':18, 'post':24, 'wusu':30}
 comments = ['This', 'is', 'a', 'comment']
 @app.route('/jinja2_user/<name>')
 def jinja2_user(name):
-    return render_template('jinja2_user.html', name=name, age=age, comments=comments)
+    return render_template('jinja2_user.html', 
+        name=name, age=age, comments=comments)
 
 '''
 bootstrap模板
 '''
+@app.route('/bootstrap')
+def bootstrap_index():
+    return render_template('bootstrap_index.html', 
+        current_time=datetime.utcnow())
+
 @app.route('/bootstrap_user/<name>')
 def bootstrap_user(name):
     return render_template('bootstrap_user.html', name=name)
@@ -59,6 +68,7 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('bootstrap_500.html'), 500
+
 
 '''
 main函数
