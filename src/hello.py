@@ -149,6 +149,24 @@ def sqlalchemy():
         form=form, name=session.get('name'),
         known=session.get('known', False))
 
+@app.route('/simple_sqlalchemy', methods=['GET', 'POST'])
+def simple_sqlalchemy():
+    form = NameForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.name.data).first()
+        if user is None:
+            user = User(username=form.name.data)
+            db.session.add(user)
+            session['known'] = False
+        else:
+            session['known'] = True
+        session['name'] = form.name.data
+        return redirect(url_for('simple_sqlalchemy'))
+    return render_template('simple_sqlalchemy.html',
+        form=form, name=session.get('name'),
+        known=session.get('known', False))
+
+
 '''
 Python shell
 '''

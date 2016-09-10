@@ -5,6 +5,8 @@ lib/*
 share/*
 *.json
 src/*.pyc
+sqlite/*
+static/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
