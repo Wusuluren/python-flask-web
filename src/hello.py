@@ -3,9 +3,11 @@ from flask import make_response
 from flask import redirect
 from flask_script import Manager
 from flask import render_template
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
 manager = Manager(app)
+bootstrap = Bootstrap(app)
 
 @app.route('/')
 def index():
@@ -42,6 +44,13 @@ comments = ['This', 'is', 'a', 'comment']
 @app.route('/jinja2_user/<name>')
 def jinja2_user(name):
     return render_template('jinja2_user.html', name=name, age=age, comments=comments)
+
+'''
+bootstrap模板
+'''
+@app.route('/bootstrap_user/<name>')
+def bootstrap_user(name):
+    return render_template('bootstrap_user.html', name=name)
 
 '''
 main函数
