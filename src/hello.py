@@ -10,6 +10,7 @@ from flask_wtf import Form
 from wtforms import StringField, SubmitField
 from wtforms.validators import Required
 from flask import session, url_for
+from flask import flash
 
 class NameForm(Form):
     name = StringField('What is your name?', validators=[Required()])
@@ -82,7 +83,10 @@ def internal_server_error(e):
 def bootstrap_form():
     form = NameForm()
     if form.validate_on_submit():
-        session['name'] = form.name.data
+        old_name = session.get('name')
+        if old_name is not None and old_name != form.name.data:
+            flash('Looks like you have changed your name!')
+        session['name'] = form.name.data        
         return redirect(url_for('bootstrap_form'))
     return render_template('bootstrap_form.html', 
         name=session.get('name'), form=form)
