@@ -11,7 +11,11 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import Required
 from flask import session, url_for
 from flask import flash
+from flask_sqlalchemy import SQLAlchemy
+import os
+from flask_script import Shell
 
+#表单
 class NameForm(Form):
     name = StringField('What is your name?', validators=[Required()])
     submit = SubmitField('Submit')
@@ -21,6 +25,32 @@ manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 app.config['SECRET_KEY'] = 'hard to guess string'
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'sqlite:///' + os.path.join(basedir, 'sqlite/data.sqlite')
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db = SQLAlchemy(app)
+
+#数据库
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    users = db.relationship('User', backref='role', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Role %r>' % self.name
+
+class User(db.Model):
+    __tablename__='users'
+    id = db.Column(db.Integer,  primary_key=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+    def __repr__(self):
+        return '<User %r>' % self.username        
+
 
 @app.route('/')
 def index():
@@ -91,6 +121,32 @@ def bootstrap_form():
     return render_template('bootstrap_form.html', 
         name=session.get('name'), form=form)
 
+'''
+SQLAlchemy数据库
+'''
+@app.route('/sqlalchemy', methods=['GET', 'POST'])
+def sqlalchemy():
+    form = NameForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.name.data).first()
+        if user is None:
+            user = User(username=form.name.data)
+            db.session.add(user)
+            session['known'] = False
+        else:
+            session['known'] = True
+        session['name'] = form.name.data
+        return redirect(url_for('sqlalchemy'))
+    return render_template('sqlalchemy.html',
+        form=form, name=session.get('name'),
+        known=session.get('known', False))
+
+'''
+Python shell
+'''
+def make_shell_contex():
+    return dict(app=app, db=db, User=User, Role=Role)
+manager.add_command('shell', Shell(make_context=make_shell_contex))
 
 '''
 main函数
