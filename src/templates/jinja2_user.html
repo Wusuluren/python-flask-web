@@ -8,6 +8,12 @@
 {% endif %}
 </head>
 
+<ul>
+    {% for comment in comments %}
+        <li>{{ comment }}</li>
+    {% endfor %}
+</ul>
+
 <body>
     <h1>Just do it!</h1>
 </body>

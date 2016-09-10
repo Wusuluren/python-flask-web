@@ -38,9 +38,10 @@ def jinja2_index():
 
 age = {'nano':18, 'post':24, 'wusu':30}
 #age = {'nano':'<h1>18</h1>', 'post':'<h1>24</h1>', 'wusu':'<h1>30</h1>'}
+comments = ['This', 'is', 'a', 'comment']
 @app.route('/jinja2_user/<name>')
 def jinja2_user(name):
-    return render_template('jinja2_user.html', name=name, age=age)
+    return render_template('jinja2_user.html', name=name, age=age, comments=comments)
 
 '''
 main函数
