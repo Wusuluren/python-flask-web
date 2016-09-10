@@ -36,8 +36,8 @@ Jinja2模板
 def jinja2_index():
     return render_template('jinja2.html')
 
-#age = {'nano':18, 'post':24, 'wusu':30}
-age = {'nano':'<h1>18</h1>', 'post':'<h1>24</h1>', 'wusu':'<h1>30</h1>'}
+age = {'nano':18, 'post':24, 'wusu':30}
+#age = {'nano':'<h1>18</h1>', 'post':'<h1>24</h1>', 'wusu':'<h1>30</h1>'}
 @app.route('/jinja2_user/<name>')
 def jinja2_user(name):
     return render_template('jinja2_user.html', name=name, age=age)
