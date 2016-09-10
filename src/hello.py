@@ -9,6 +9,7 @@ from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SubmitField
 from wtforms.validators import Required
+from flask import session, url_for
 
 class NameForm(Form):
     name = StringField('What is your name?', validators=[Required()])
@@ -79,13 +80,12 @@ def internal_server_error(e):
 
 @app.route('/bootstrap_form', methods=['GET', 'POST'])
 def bootstrap_form():
-    name = None
     form = NameForm()
     if form.validate_on_submit():
-        name = form.name.data
-        form.name.data = '' 
+        session['name'] = form.name.data
+        return redirect(url_for('bootstrap_form'))
     return render_template('bootstrap_form.html', 
-        name=name, form=form)
+        name=session.get('name'), form=form)
 
 
 '''
