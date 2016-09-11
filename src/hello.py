@@ -2,18 +2,26 @@ from flask import Flask
 from flask import make_response
 from flask import redirect
 from flask_script import Manager
+
 from flask import render_template
 from flask_bootstrap import Bootstrap
+
 from flask_moment import Moment
 from datetime import datetime
+
 from flask_wtf import Form
 from wtforms import StringField, SubmitField
 from wtforms.validators import Required
+
 from flask import session, url_for
 from flask import flash
+
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_script import Shell
+
+from flask_mail import Mail
+from flask_mail import Message
 
 #表单
 class NameForm(Form):
@@ -22,8 +30,14 @@ class NameForm(Form):
 
 app = Flask(__name__)
 manager = Manager(app)
+
+#bootstrap模板
 bootstrap = Bootstrap(app)
+
+#时间
 moment = Moment(app)
+
+#SQLAlchemy数据库
 app.config['SECRET_KEY'] = 'hard to guess string'
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = \
@@ -31,6 +45,22 @@ app.config['SQLALCHEMY_DATABASE_URI'] = \
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
+
+#邮件
+app.config['MAIL_SERVER'] = 'smtp.qq.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+#在shell中使用下列命令设置环境变量
+#export MAIL_USERNAME = your_username
+#export MAIL_PASSWORD = your_password
+#export FLASK_MAIL_SENDER = your_email_sender
+#export FLASK_MAIL_RECEIVER = your_email_receiver
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+FLASK_MAIL_SENDER = os.environ.get('MAIL_SENDER')
+FLASK_MAIL_RECEIVER = os.environ.get('MAIL_RECEIVER')
+mail = Mail(app)
 
 #数据库
 class Role(db.Model):
@@ -177,9 +207,21 @@ def make_shell_contex():
 manager.add_command('shell', Shell(make_context=make_shell_contex))
 
 '''
+邮件
+'''
+def TestSendMail():
+    msg = Message('test subject', sender=FLASK_MAIL_SENDER,
+        recipients=[FLASK_MAIL_RECEIVER])
+    msg.body = 'test body'
+    msg.html = '<b>HTML</b> body'
+    with app.app_context():
+        mail.send(msg)
+
+'''
 main函数
 '''
 if __name__ == '__main__':
     #app.run(debug=True, port=5002)
     InitSqlAlchemy()
+    #TestSendMail()
     manager.run()
