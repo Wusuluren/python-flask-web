@@ -56,10 +56,15 @@ app.config['MAIL_USE_SSL'] = True
 #export MAIL_PASSWORD = your_password
 #export FLASK_MAIL_SENDER = your_email_sender
 #export FLASK_MAIL_RECEIVER = your_email_receiver
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+FLASK_MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+FLASK_MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 FLASK_MAIL_SENDER = os.environ.get('MAIL_SENDER')
 FLASK_MAIL_RECEIVER = os.environ.get('MAIL_RECEIVER')
+app.config['MAIL_USERNAME'] = FLASK_MAIL_USERNAME
+app.config['MAIL_PASSWORD'] = FLASK_MAIL_PASSWORD
+app.config['MAIL_SUBJECT_PREFIX'] = '[Flasky]'
+app.config['MAIL_SENDER'] = FLASK_MAIL_SENDER
+app.config['MAIL_RECEIVER'] = FLASK_MAIL_RECEIVER
 mail = Mail(app)
 
 #数据库
@@ -216,6 +221,21 @@ def TestSendMail():
     msg.html = '<b>HTML</b> body'
     with app.app_context():
         mail.send(msg)
+
+def send_email(to, subject, template, **kwargs):
+    msg = Message(app.config['MAIL_SUBJECT_PREFIX']+subject,
+        sender=app.config['MAIL_SENDER'],
+        recipients=[to])
+    msg.body = render_template(template + '.text', **kwargs)
+    msg.html = render_template(template + '.html', **kwargs)
+    mail.send(msg)
+
+@app.route('/email_index')
+def email_index():
+    if app.config['MAIL_RECEIVER']:
+        send_email(app.config['MAIL_RECEIVER'], 'new email',
+        'mail/email_index')
+    return render_template('mail/email_sent.html')
 
 '''
 main函数
