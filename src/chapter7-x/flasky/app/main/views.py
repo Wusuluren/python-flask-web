@@ -1,4 +1,4 @@
-from datatime import datatime
+from datetime import datetime
 from flask import render_template, session, redirect, url_for
 
 from . import main
@@ -22,4 +22,4 @@ def index():
     return render_template('bootstrap_index.html',
         form=form, name=session.get('name'),
         known=session.get('known', False),
-        current_time=datatime.utcnow())        
+        current_time=datetime.utcnow())        
