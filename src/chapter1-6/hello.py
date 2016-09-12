@@ -30,6 +30,7 @@ class NameForm(Form):
     submit = SubmitField('Submit')
 
 app = Flask(__name__)
+#启动程序
 manager = Manager(app)
 
 #bootstrap模板
