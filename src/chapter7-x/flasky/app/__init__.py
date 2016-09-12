@@ -10,6 +10,7 @@ mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
 
+#工厂函数
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -21,5 +22,9 @@ def create_app(config_name):
     db.init_app(app)
 
     #附加路由和自定义的错误页面
+
+    #注册蓝本
+    from .main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
 
     return app
