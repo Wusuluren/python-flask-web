@@ -4,9 +4,12 @@ include/*
 lib/*
 share/*
 *.json
-src/*.pyc
-src/sqlite/*
-src/static/*
+*.pyc
+*.sqlite
+*.png
+*.jpg
+*.jpeg
+*.ico
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
